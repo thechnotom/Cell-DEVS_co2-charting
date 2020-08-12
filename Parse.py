@@ -6,7 +6,6 @@ class Parse:
     def getCellStates (filename, coords):
         dataPoints = []
         currTime = 0
-        duplicateTime = False
         with open(filename, "r") as f:
             for line in f:
                 # Update time
@@ -14,21 +13,12 @@ class Parse:
                     # If there is no cell with the given coordinates in a particular time, use the previous
                     if (currTime > 0 and len(dataPoints) > 0 and dataPoints[-1].getTime() != currTime):
                         dataPoints.append(DataPoint(currTime, dataPoints[-1].getConcentration()))
-                        #dataPoints.append(DataPoint(currTime, 500))
-                    # If there is a duplicate consecutive time, set a flag
-                    if (currTime > 0 and currTime == int(line)):
-                        # If the point has already been added for this time
-                        if (len(dataPoints) > 0 and dataPoints[-1].getTime() == currTime):
-                            duplicateTime = True
-                    else:
-                        duplicateTime = False
                     currTime = int(line)
                     continue
 
                 # Adds cell to list
                 if (Parse.matchesCoords(line, coords)):
-                    if (not duplicateTime):
-                        dataPoints.append(Parse.getDataPoint(currTime, line))
+                    dataPoints.append(Parse.getDataPoint(currTime, line))
         return dataPoints
 
     @staticmethod

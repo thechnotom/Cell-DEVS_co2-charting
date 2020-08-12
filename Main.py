@@ -26,4 +26,4 @@ print(f"Number of cells: {len(dataPoints)}")
 #for i in range(0, len(dataPoints)):
 #    print(f"output {dataPoints[i]}")
 
-Graph.generateGraph(dataPoints)
+Graph.generateGraph(dataPoints, cell)
