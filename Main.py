@@ -4,7 +4,9 @@ import time
 import sys
 
 filename = sys.argv[1]
-cell = [int(sys.argv[2]), int(sys.argv[3])]
+coords = []
+for i in range (2, len(sys.argv)):
+    coords.append(int(sys.argv[i]))
 
 # 2D test: [4, 42]
 # 3D test: [25, 20, 3]
@@ -15,7 +17,7 @@ cell = [int(sys.argv[2]), int(sys.argv[3])]
 print(f"Parsing: {filename}")
 
 startTime = time.monotonic()
-dataPoints = Parse.getCellStates(filename, [4, 42])
+dataPoints = Parse.getCellStates(filename, coords)
 endTime = time.monotonic()
 
 print(f"Parse complete")
@@ -23,7 +25,11 @@ print(f"Parse complete")
 print(f"Time taken: {endTime - startTime}s")
 print(f"Number of cells: {len(dataPoints)}")
 
+if (len(dataPoints) == 0):
+    print("No data points found (cannot generate graph)")
+    sys.exit(1)
+
 #for i in range(0, len(dataPoints)):
 #    print(f"output {dataPoints[i]}")
 
-Graph.generateGraph(dataPoints, cell)
+Graph.generateGraph(dataPoints, coords)
