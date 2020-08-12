@@ -6,29 +6,26 @@ class Parse:
     def getCellStates (filename, coords):
         dataPoints = []
         currTime = 0
-        not_added_counter = 0
-        not_consecutive_times = 0
-        equal_times = 0
+        duplicateTime = False
         with open(filename, "r") as f:
             for line in f:
                 # Update time
                 if (Parse.isTime(line)):
+                    # If there is no cell with the given coordinates in a particular time, use the previous
                     if (currTime > 0 and dataPoints[-1].getTime() != currTime):
-                        dataPoints.append(dataPoints[-1].copy())
-                        not_added_counter += 1
-                    if (currTime + 1 != int(line)):
-                        not_consecutive_times += 1
-                    if (currTime == int(line)):
-                        equal_times += 1
+                        if (len(dataPoints) > 0):
+                            dataPoints.append(DataPoint(currTime, dataPoints[-1].getConcentration()))
+                        else:
+                            dataPoints.append(DataPoint(-1, -1))
+                    if (currTime > 0 and currTime == int(line)):
+                        duplicateTime = True
                     currTime = int(line)
                     continue
 
                 # Adds cell to list
                 if (Parse.matchesCoords(line, coords)):
-                    dataPoints.append(Parse.getDataPoint(currTime, line))
-        print(f"Not added counter: {not_added_counter}")
-        print(f"Not consecutive counter: {not_consecutive_times}")
-        print(f"Equal times: {equal_times}")
+                    if (not duplicateTime):
+                        dataPoints.append(Parse.getDataPoint(currTime, line))
         return dataPoints
 
     @staticmethod
