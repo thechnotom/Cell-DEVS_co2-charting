@@ -12,13 +12,16 @@ class Parse:
                 # Update time
                 if (Parse.isTime(line)):
                     # If there is no cell with the given coordinates in a particular time, use the previous
-                    if (currTime > 0 and dataPoints[-1].getTime() != currTime):
-                        if (len(dataPoints) > 0):
-                            dataPoints.append(DataPoint(currTime, dataPoints[-1].getConcentration()))
-                        else:
-                            dataPoints.append(DataPoint(-1, -1))
+                    if (currTime > 0 and len(dataPoints) > 0 and dataPoints[-1].getTime() != currTime):
+                        dataPoints.append(DataPoint(currTime, dataPoints[-1].getConcentration()))
+                        #dataPoints.append(DataPoint(currTime, 500))
+                    # If there is a duplicate consecutive time, set a flag
                     if (currTime > 0 and currTime == int(line)):
-                        duplicateTime = True
+                        # If the point has already been added for this time
+                        if (len(dataPoints) > 0 and dataPoints[-1].getTime() == currTime):
+                            duplicateTime = True
+                    else:
+                        duplicateTime = False
                     currTime = int(line)
                     continue
 

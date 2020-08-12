@@ -13,5 +13,11 @@ class DataPoint:
     def copy (self):
         return DataPoint(self.time, self.conc)
 
+    def toArray (self):
+        return [self.time, self.conc]
+
     def __str__ (self):
         return f"{self.time}:{self.conc}"
+
+    def __lt__ (self, value):
+        return self.conc < value.conc
