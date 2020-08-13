@@ -1,7 +1,7 @@
 from Interface import Interface
 import sys
 
-transient = False
+transient = True
 
 if (len(sys.argv) > 1):
     Interface.start(filename=sys.argv[1], transient=transient)
