@@ -21,3 +21,9 @@ class DataPoint:
 
     def __lt__ (self, value):
         return self.conc < value.conc
+
+    def __eq__ (self, value):
+        return self.time == value.time  # not concerned about concentration
+
+    def __ne__ (self, value):
+        return not self.__eq__(value)

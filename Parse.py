@@ -13,12 +13,16 @@ class Parse:
                     # If there is no cell with the given coordinates in a particular time, use the previous
                     if (currTime > 0 and len(dataPoints) > 0 and dataPoints[-1].getTime() != currTime):
                         dataPoints.append(DataPoint(currTime, dataPoints[-1].getConcentration()))
+                        print(f"Adding manually (time: {currTime})")
                     currTime = int(line)
                     continue
 
                 # Adds cell to list
                 if (Parse.matchesCoords(line, coords)):
-                    dataPoints.append(Parse.getDataPoint(currTime, line))
+                    dataPoint = Parse.getDataPoint(currTime, line)
+                    if (dataPoint not in dataPoints):
+                        dataPoints.append(dataPoint)
+                    #dataPoints.append(Parse.getDataPoint(currTime, line))
         return dataPoints
 
     @staticmethod
