@@ -6,9 +6,12 @@ import tkinter as tk
 
 class Interface (tk.Frame):
 
-    def __init__ (self, master=None, filename=""):
+    def __init__ (self, master=None, filename="", transient=True):
         super().__init__(master)
         self.filename = filename
+        self.transient = transient
+        if (filename != ""):
+            self.createCellDictionary()
         self.master = master
         self.master.title("Graph Generator")
         self.pack()
@@ -62,10 +65,17 @@ class Interface (tk.Frame):
             self.stringVar_status.set("Invalid coordinate format")
             print(f"WARNING: Invalid coordinate string ({self.stringVar_entry_coords.get()})")
             return
-        self.stringVar_status.set("Parsing file...")
+        self.stringVar_status.set("Searching for coordinates...")
         self.update()
-        if (Actions.generateGraph(self.filename, coords)):
-            self.stringVar_status.set("Parsing complete")
+
+        result = False
+        if (self.transient):
+            result = Actions.generateGraph(filename=self.filename, coords=coords)
+        else:
+            result = Actions.generateGraph(cellDict=self.cellDict, coords=coords)
+
+        if (result):
+            self.stringVar_status.set("Showing graph")
             return
         else:
             self.stringVar_status.set("No data point matching coordinates found")
@@ -75,6 +85,19 @@ class Interface (tk.Frame):
         if (filename != ""):
             self.filename = filename
             Interface.setFilenameStringVar(self.stringVar_filename, self.filename)
+            self.createCellDictionary(initializing=False)
+
+    def createCellDictionary (self, initializing=True):
+        if (not self.transient):
+            if (not initializing):
+                self.stringVar_status.set("Populating data point storage...")
+                self.update()
+            print("Populating data point storage...")
+            self.cellDict = Actions.getAllCellStates(self.filename)
+            if (not initializing):
+                self.stringVar_status.set("Storage populated")
+                self.update()
+            print("Storage populated")
 
     @staticmethod
     def setFilenameStringVar (stringVar, string):
@@ -84,7 +107,7 @@ class Interface (tk.Frame):
         stringVar.set(stringStart + string[-25:])
 
     @staticmethod
-    def start (filename=""):
+    def start (filename="", transient=True):
         root = tk.Tk()
-        app = Interface(master=root, filename=filename)
+        app = Interface(master=root, filename=filename, transient=transient)
         app.mainloop()
