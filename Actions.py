@@ -19,6 +19,7 @@ class Actions:
 
         if (len(dataPoints) == 0):
             print("No data points found (cannot generate graph)")
-            return
+            return False
 
         Graph.generateGraph(dataPoints, coords)
+        return True
