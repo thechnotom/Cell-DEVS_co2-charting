@@ -14,7 +14,6 @@ class Actions:
             self.graphicalElements = graphicalElements
 
         def run (self):
-            print(f"GraphThread.run: size of cellDict: {len(self.cellDict)}")
             self.graphicalElements["graphButton"]["state"] = "disable"
             result = Actions.generateGraph(self.filename, self.coords, self.cellDict)
             if (result[0]):
