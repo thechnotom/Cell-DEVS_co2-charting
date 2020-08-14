@@ -5,6 +5,14 @@ import threading
 
 class Actions:
 
+    # Class: GraphThread
+    # Purpose: thread class used to generate a graph
+    # Arguments:
+    #     self: enclosing instance (automatic, not user specified)
+    #     graphicalElements: dictionary of elements from a GUI which can be modified within the thread
+    #     filename: name of the file from which to obtain graphing data (transient mode only)
+    #     coords: coordinates for which to generate a graph
+    #     cellDict: dictionary of cells read from the file (non-transient mode only)
     class GraphThread(threading.Thread):
         def __init__ (self, graphicalElements, filename="", coords=None, cellDict=None):
             super().__init__(daemon=True)
@@ -22,6 +30,14 @@ class Actions:
                 self.graphicalElements["statusLabel"].set("No data point matching coordinates found")
             self.graphicalElements["graphButton"]["state"] = "normal"
 
+    # Class: LoadThread
+    # Purpose: thread class used to load coordinate data (only used in non-transient mode)
+    # Arguments:
+    #     self: enclosing instance (automatic, not user specified)
+    #     graphicalElements: dictionary of elements from a GUI which can be modified within the thread
+    #     filename: name of the file from which to obtain coordinate data
+    #     coords: coordinates for which to generate a graph
+    #     cellDict: dictionary used to store coordinates
     class LoadThread(threading.Thread):
         def __init__ (self, graphicalElements, filename="", cellDict=None):
             super().__init__(daemon=True)
@@ -42,6 +58,21 @@ class Actions:
             self.graphicalElements["statusLabel"].set(f"Storage populated (elapsed: {round(result[1], 2)}s)")
             print("Storage populated")
 
+    # Function: //
+    # Purpose: //
+    # Arguments:
+    #     //: //
+    # Return:
+    #     //
+
+    # Function: generateGraph
+    # Purpose: a wrapper class that generates a graph (displays in a web browser)
+    # Arguments:
+    #     filename: name of the file from which to obtain graphing data (transient mode only)
+    #     coords: coordinates for which to generate a graph
+    #     cellDict: dictionary of cells read from the file (non-transient mode only)
+    # Return:
+    #     list containing the success/failure and the time elapsed
     @staticmethod
     def generateGraph (filename="", coords=None, cellDict=None):
         if (filename == "" and coords is not None and cellDict is not None):
@@ -52,6 +83,13 @@ class Actions:
             print("WARNING: Invalid parameters")
             return [False, 0]
 
+    # Function: generateGraph_transient
+    # Purpose: generate a graph directly from a file (displays in a web browser)
+    # Arguments:
+    #     filename: name of the file from which to obtain graphing data
+    #     coords: coordinates for which to generate a graph
+    # Return:
+    #     list containing the success/failure and the time elapsed
     @staticmethod
     def generateGraph_transient (filename, coords):
         print(f"Parsing file ({filename}) for coords: {coords}")
@@ -73,6 +111,13 @@ class Actions:
         Graph.generateGraph(dataPoints, coords)
         return [True, timeElapsed]
 
+    # Function: generateGraph_query
+    # Purpose: generate a graph from a dictionary of coordinates
+    # Arguments:
+    #     cellDict: dictionary to be used to generate a graph
+    #     coords: coordinates for which to generate a graph
+    # Return:
+    #     list containing the success/failure and the time elapsed
     @staticmethod
     def generateGraph_query (cellDict, coords):
         print(f"Querying dictionary for coords: {coords}")
@@ -97,6 +142,12 @@ class Actions:
         Graph.generateGraph(dataPoints, coords)
         return [True, timeElapsed]
 
+    # Function: getAllCellStates
+    # Purpose: obtain all of the coordinates from a file for every cell
+    # Arguments:
+    #     filename: name of the file from which to obtain coordinate data
+    # Return:
+    #     list containing the coordinate data and the time elapsed
     @staticmethod
     def getAllCellStates (filename):
         print(f"Parsing file ({filename})...")

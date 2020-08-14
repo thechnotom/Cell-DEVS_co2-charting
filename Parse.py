@@ -2,7 +2,13 @@ from DataPoint import DataPoint
 
 class Parse:
 
-    # Consult the file for each cell query
+    # Function: getCellStates
+    # Purpose: get data on a coordinate by consulting the file for each query
+    # Arguments:
+    #     filename: name of file to search
+    #     coords: coordinates for which to get information
+    # Return:
+    #     list of DataPoint objects
     @staticmethod
     def getCellStates (filename, coords):
         dataPoints = []
@@ -24,6 +30,12 @@ class Parse:
                         dataPoints.append(dataPoint)
         return dataPoints
 
+    # Function: getAllCellStates
+    # Purpose: get data on all coordinates present in the file
+    # Arguments:
+    #     filename: name of file to parse
+    # Return:
+    #     dictionary containing data on coordinates
     @staticmethod
     def getAllCellStates (filename):
         dataPoints = {}
@@ -44,13 +56,19 @@ class Parse:
                     dataPoints[currCoords].append(dataPoint)
 
         print("Cleaning data points...")
-        return Parse.cleanDataPoints(filename, dataPoints)
+        return Parse.cleanDataPoints(filename, dataPoints, currTime)
 
+    # Function: cleanDataPoints
+    # Purpose: adds missing DataPoint objects that could not parsed from a file
+    # Arguments:
+    #     filename: name of file from which the DataPoint objects were parsed
+    #     dataPoints: dictionary of dataPoints before being cleaned
+    # Return:
+    #     dictionary containing complete set of DataPoints
     @staticmethod
-    def cleanDataPoints (filename, dataPoints):
-        maxTime = Parse.getMaxTime(filename)
+    def cleanDataPoints (filename, dataPoints, numSteps):
         for key in dataPoints:
-            for i in range(0, maxTime):
+            for i in range(0, numSteps):
                 if (i < len(dataPoints[key])):
                     if (dataPoints[key][i].getTime() != i):
                         dataPoints[key].insert(i, DataPoint(i, dataPoints[key][i - 1].getConcentration()))
@@ -58,23 +76,33 @@ class Parse:
                     dataPoints[key].append(dataPoints[key][-1])
         return dataPoints
 
-    @staticmethod
-    def getMaxTime (filename):
-        time = -1
-        with open(filename, "r") as f:
-            for line in f:
-                if (Parse.isTime(line)):
-                    time = int(line)
-        return time
-
+    # Function: matchCoords
+    # Purpose: determine whether a line contains information about a coordinate
+    # Arguments:
+    #     line: string being checked
+    #     coords:
+    # Return:
+    #     //
     @staticmethod
     def matchesCoords (line, coords):
         return coords == Parse.getCoords(line)
 
+    # Function: //
+    # Purpose: //
+    # Arguments:
+    #     //: //
+    # Return:
+    #     //
     @staticmethod
     def getCoords (line):
         return [int(element) for element in line[line.find("(") + 1:line.find(")")].split(",")]
 
+    # Function: //
+    # Purpose: //
+    # Arguments:
+    #     //: //
+    # Return:
+    #     //
     @staticmethod
     def getCoordsString (coords):
         result = ""
@@ -84,10 +112,22 @@ class Parse:
                 result += ","
         return result
 
+    # Function: //
+    # Purpose: //
+    # Arguments:
+    #     //: //
+    # Return:
+    #     //
     @staticmethod
     def getDataPoint (time, line):
         return DataPoint(time, [int(element) for element in line[line.rfind("<") + 1:line.rfind(">")].split(",")][1])
 
+    # Function: //
+    # Purpose: //
+    # Arguments:
+    #     //: //
+    # Return:
+    #     //
     @staticmethod
     def isTime (line):
         try:
