@@ -19,7 +19,7 @@ class Graph:
             title += str(coord[1])
             if (coord[0] != len(coords) - 1):
                 title += ", "
-        return title + ")"
+        return title + ") vs. Time"
 
     @staticmethod
     def generateGraph (dataPoints, coords):

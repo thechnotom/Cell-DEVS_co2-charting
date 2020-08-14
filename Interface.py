@@ -8,14 +8,17 @@ class Interface (tk.Frame):
 
     def __init__ (self, master=None, filename="", transient=True):
         super().__init__(master)
+        self.graphThread = None  # used when generating graphs
+        self.loadThread = None  # used when loading in cell data (non-transient mode only)
         self.filename = filename
         self.transient = transient
-        if (filename != ""):
-            self.createCellDictionary()
+        self.cellDict = {}
         self.master = master
         self.master.title("Graph Generator")
         self.pack()
         self.createWidgets()
+        if (filename != ""):
+            self.createCellDictionary()
 
     def createWidgets (self):
         # Coordinate information
@@ -59,6 +62,10 @@ class Interface (tk.Frame):
         self.label_status.pack(side="right", padx=5, pady=5)
 
     def buttonCB_generateGraph (self):
+        if (not self.transient and len(self.cellDict) == 0):
+            self.stringVar_status.set("No cells have been loaded")
+            return
+
         try:
             coords = [int(x.strip()) for x in self.stringVar_entry_coords.get().split(",")]
         except ValueError:
@@ -68,36 +75,50 @@ class Interface (tk.Frame):
         self.stringVar_status.set("Searching for coordinates...")
         self.update()
 
-        result = False
+        # Make the variable accessible from within the thread
+        graphicalElements = {
+            "statusLabel" : self.stringVar_status,
+            "graphButton" : self.button_generateGraph
+        }
         if (self.transient):
-            result = Actions.generateGraph(filename=self.filename, coords=coords)
+            #result = Actions.generateGraph(filename=self.filename, coords=coords)
+            self.graphThread = Actions.GraphThread(graphicalElements=graphicalElements, filename=self.filename, coords=coords)
         else:
-            result = Actions.generateGraph(cellDict=self.cellDict, coords=coords)
+            #result = Actions.generateGraph(cellDict=self.cellDict, coords=coords)
+            self.graphThread = Actions.GraphThread(graphicalElements=graphicalElements, cellDict=self.cellDict, coords=coords)
 
-        if (result):
-            self.stringVar_status.set("Showing graph")
-            return
-        else:
-            self.stringVar_status.set("No data point matching coordinates found")
+        # Do not wait for this thread (it disables the graph generation button until completed)
+        # The thread is a daemon and will terminate when finished or when the main thread terminates
+        self.graphThread.start()
 
     def buttonCB_fileSelect (self):
+        if (self.loadThread is not None and self.loadThread.isAlive()):
+            self.stringVar_status.set("Populating data point storage...")
+            return
         filename = tk.filedialog.askopenfilename(initialdir=".", title="Select File")
         if (filename != ""):
             self.filename = filename
             Interface.setFilenameStringVar(self.stringVar_filename, self.filename)
-            self.createCellDictionary(initializing=False)
+            self.createCellDictionary()
 
-    def createCellDictionary (self, initializing=True):
+    def createCellDictionary (self):
         if (not self.transient):
-            if (not initializing):
-                self.stringVar_status.set("Populating data point storage...")
-                self.update()
+            self.stringVar_status.set("Populating data point storage...")
+            self.update()
             print("Populating data point storage...")
-            self.cellDict = Actions.getAllCellStates(self.filename)
-            if (not initializing):
-                self.stringVar_status.set("Storage populated")
-                self.update()
-            print("Storage populated")
+
+            # Make the variable accessible from within the thread
+            graphicalElements = {
+                "statusLabel" : self.stringVar_status,
+                "graphButton" : self.button_generateGraph,
+                "fileButton" : self.button_fileSelect
+            }
+
+            self.loadThread = Actions.LoadThread(graphicalElements=graphicalElements, filename=self.filename, cellDict=self.cellDict)
+
+            # Do not wait for this thread (it disables the graph generation button until completed)
+            # The thread is a daemon and will terminate when finished or when the main thread terminates
+            self.loadThread.start()
 
     @staticmethod
     def setFilenameStringVar (stringVar, string):
