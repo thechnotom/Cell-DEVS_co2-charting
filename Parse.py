@@ -80,7 +80,7 @@ class Parse:
                     if (dataPoints[key][i].getTime() != i):
                         dataPoints[key].insert(i, DataPoint(i, dataPoints[key][i - 1].getConcentration()))
                 else:
-                    dataPoints[key].append(dataPoints[key][-1])
+                    dataPoints[key].append(DataPoint(i, dataPoints[key][-1].getConcentration()))
         return dataPoints
 
     # Function: matchCoords
