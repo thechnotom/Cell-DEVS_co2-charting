@@ -1,8 +1,15 @@
+# Carleton University (ARSLab)
+# Thomas Roller
+
 from Parse import Parse
 from Graph import Graph
 import time
 import threading
 
+# Class: Actions
+# Purpose: couple functionality from different classes and provide extra output for users/developers
+# Arguments:
+#     none
 class Actions:
 
     # Class: GraphThread
@@ -57,13 +64,6 @@ class Actions:
 
             self.graphicalElements["statusLabel"].set(f"Storage populated (elapsed: {round(result[1], 2)}s)")
             print("Storage populated")
-
-    # Function: //
-    # Purpose: //
-    # Arguments:
-    #     //: //
-    # Return:
-    #     //
 
     # Function: generateGraph
     # Purpose: a wrapper class that generates a graph (displays in a web browser)

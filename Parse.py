@@ -1,5 +1,12 @@
+# Carleton University (ARSLab)
+# Thomas Roller
+
 from DataPoint import DataPoint
 
+# Class: Parse
+# Purpose: provide file I/O and parsing capabilities
+# Arguments:
+#     none
 class Parse:
 
     # Function: getCellStates
@@ -77,32 +84,32 @@ class Parse:
         return dataPoints
 
     # Function: matchCoords
-    # Purpose: determine whether a line contains information about a coordinate
+    # Purpose: determine whether a line contains information about a set of  coordinates
     # Arguments:
     #     line: string being checked
-    #     coords:
+    #     coords: coordinates being used as search criterion
     # Return:
-    #     //
+    #     whether or not the line contains information about a set of coordinates
     @staticmethod
     def matchesCoords (line, coords):
         return coords == Parse.getCoords(line)
 
-    # Function: //
-    # Purpose: //
+    # Function: getCoords
+    # Purpose: get a set of coordinates from a string
     # Arguments:
-    #     //: //
+    #     line: line to be parsed
     # Return:
-    #     //
+    #     list containing a set of coordinates
     @staticmethod
     def getCoords (line):
         return [int(element) for element in line[line.find("(") + 1:line.find(")")].split(",")]
 
-    # Function: //
-    # Purpose: //
+    # Function: getCoordsString
+    # Purpose: convert a list of coordinates into a string
     # Arguments:
-    #     //: //
+    #     coords: coordinates to be converted
     # Return:
-    #     //
+    #     string representing a set of coordinates
     @staticmethod
     def getCoordsString (coords):
         result = ""
@@ -112,22 +119,23 @@ class Parse:
                 result += ","
         return result
 
-    # Function: //
-    # Purpose: //
+    # Function: getDataPoint
+    # Purpose: create a DataPoint
     # Arguments:
-    #     //: //
+    #     time: time being used to create a DataPoint
+    #     line: string which contains information about the concentration for a specific time-step
     # Return:
-    #     //
+    #     DataPoint instance that represents the concentration at a specific time-step for a set of coordinates
     @staticmethod
     def getDataPoint (time, line):
         return DataPoint(time, [int(element) for element in line[line.rfind("<") + 1:line.rfind(">")].split(",")][1])
 
-    # Function: //
-    # Purpose: //
+    # Function: isTime
+    # Purpose: determine if a line represents a time-step indicator
     # Arguments:
-    #     //: //
+    #     line: line being checked
     # Return:
-    #     //
+    #     whether or not a line represents a time-step indicator
     @staticmethod
     def isTime (line):
         try:
