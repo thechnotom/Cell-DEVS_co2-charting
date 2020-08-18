@@ -1,6 +1,7 @@
 # Carleton University (ARSLab)
 # Thomas Roller
 
+from Constants import Constants
 import plotly.express as px
 import pandas as pd
 
@@ -19,7 +20,7 @@ class Graph:
     @staticmethod
     def createDataFrame (dataPoints):
         points = [x.toArray() for x in dataPoints]
-        return pd.DataFrame(data=points, columns=["time", "concentration"])
+        return pd.DataFrame(data=points, columns=[Constants.Graph.labelX, Constants.Graph.labelY])
 
     # Function: getRange
     # Purpose: get the minimum and maximum values for concentration to be used on a graph
@@ -39,6 +40,8 @@ class Graph:
     #     a string representing the title of the graph
     @staticmethod
     def getTitle (coords):
+        if (Constants.Graph.title is not None):
+            return Constants.Graph.title
         title = "CO2 Concentration at Cell ("
         for coord in enumerate(coords):
             title += str(coord[1])
@@ -56,5 +59,5 @@ class Graph:
     @staticmethod
     def generateGraph (dataPoints, coords):
         dataFrame = Graph.createDataFrame(dataPoints)
-        graph = px.bar(dataFrame, x="time", y="concentration", range_y=Graph.getRange(dataPoints), title=Graph.getTitle(coords))
+        graph = px.bar(dataFrame, x=Constants.Graph.labelX, y=Constants.Graph.labelY, range_y=Graph.getRange(dataPoints), title=Graph.getTitle(coords))
         graph.show()
