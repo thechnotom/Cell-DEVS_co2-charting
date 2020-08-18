@@ -29,12 +29,14 @@ class Actions:
             self.graphicalElements = graphicalElements
 
         def run (self):
+            self.graphicalElements["fileButton"]["state"] = "disable"
             self.graphicalElements["graphButton"]["state"] = "disable"
             result = Actions.generateGraph(self.filename, self.coords, self.cellDict)
             if (result[0]):
                 self.graphicalElements["statusLabel"].set(f"Showing graph (elapsed: {round(result[1], 2)}s)")
             else:
                 self.graphicalElements["statusLabel"].set("No data point matching coordinates found")
+            self.graphicalElements["fileButton"]["state"] = "normal"
             self.graphicalElements["graphButton"]["state"] = "normal"
 
     # Class: LoadThread

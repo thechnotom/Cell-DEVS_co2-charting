@@ -76,6 +76,13 @@ class Interface (tk.Frame):
         self.label_status = tk.Label(self.labelFrame_status, textvariable=self.stringVar_status)
         self.label_status.pack(side="right", padx=5, pady=5)
 
+        # Make the variable accessible from within the thread
+        self.graphicalElements = {
+            "statusLabel" : self.stringVar_status,
+            "graphButton" : self.button_generateGraph,
+            "fileButton" : self.button_fileSelect
+        }
+
     # Function: buttonCB_generateGraph
     # Purpose: callback function for the "button_generateGraph" button on the GUI
     # Arguments:
@@ -96,17 +103,10 @@ class Interface (tk.Frame):
         self.stringVar_status.set("Searching for coordinates...")
         self.update()
 
-        # Make the variable accessible from within the thread
-        graphicalElements = {
-            "statusLabel" : self.stringVar_status,
-            "graphButton" : self.button_generateGraph
-        }
         if (self.transient):
-            #result = Actions.generateGraph(filename=self.filename, coords=coords)
-            self.graphThread = Actions.GraphThread(graphicalElements=graphicalElements, filename=self.filename, coords=coords)
+            self.graphThread = Actions.GraphThread(graphicalElements=self.graphicalElements, filename=self.filename, coords=coords)
         else:
-            #result = Actions.generateGraph(cellDict=self.cellDict, coords=coords)
-            self.graphThread = Actions.GraphThread(graphicalElements=graphicalElements, cellDict=self.cellDict, coords=coords)
+            self.graphThread = Actions.GraphThread(graphicalElements=self.graphicalElements, cellDict=self.cellDict, coords=coords)
 
         # Do not wait for this thread (it disables the graph generation button until completed)
         # The thread is a daemon and will terminate when finished or when the main thread terminates
@@ -140,14 +140,7 @@ class Interface (tk.Frame):
             self.update()
             print("Populating data point storage...")
 
-            # Make the variable accessible from within the thread
-            graphicalElements = {
-                "statusLabel" : self.stringVar_status,
-                "graphButton" : self.button_generateGraph,
-                "fileButton" : self.button_fileSelect
-            }
-
-            self.loadThread = Actions.LoadThread(graphicalElements=graphicalElements, filename=self.filename, cellDict=self.cellDict)
+            self.loadThread = Actions.LoadThread(graphicalElements=self.graphicalElements, filename=self.filename, cellDict=self.cellDict)
 
             # Do not wait for this thread (it disables the graph generation button until completed)
             # The thread is a daemon and will terminate when finished or when the main thread terminates
