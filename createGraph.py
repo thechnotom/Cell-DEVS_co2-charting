@@ -6,7 +6,7 @@
 # generate the graphs. (The program has been tested using the "output_messages.txt" file primarily
 # but should also function without issue using the "state.txt" output file.)
 #
-# There are two mode for the program: transient and stored.
+# There are two mode for the program: transient and store.
 #
 # === Transient Mode ===
 # Transient mode causes the program to consult the output file each time a new graph is requested.
@@ -14,8 +14,8 @@
 # for larger output files) but requires more time to generate the graph as the entire file must
 # be parsed each time.
 #
-# == Stored Mode ===
-# Stored mode causes the program to load the entire output file into memory. There are no checks
+# == Store Mode ===
+# Store mode causes the program to load the entire output file into memory. There are no checks
 # to ensure that the file will fit into memory and the program may crash for exceedingly large
 # files. This mode also results in significant initial loading times. However, once the file is
 # loaded, subsequent requests for graphs will be very quick as the program only needs to do a
@@ -35,17 +35,17 @@ argParser.add_argument("--filename",
                         help="name of file to be loaded",
                         dest="filename")
 
-argParser.add_argument("--stored",
+argParser.add_argument("--store",
                        "-s",
                        action="store_true",
-                       help="turn on stored mode (as opposed to the default of transient mode)",
-                       dest="stored")
+                       help="turn on store mode (as opposed to the default of transient mode)",
+                       dest="store")
 
 args = argParser.parse_args()
 
-transient = not args.stored
+transient = not args.store
 
-mode = "transient" if transient else "stored"
+mode = "transient" if transient else "store"
 print(f"Mode: {mode}")
 
 if (args.filename is None):
